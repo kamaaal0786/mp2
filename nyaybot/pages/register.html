@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - LEXAI | Indian Legal Intelligence</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/register.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <span class="logo-icon">⚖️</span>
+                <div class="logo-text">LEXAI</div>
+                <div class="logo-subtitle">Indian Legal Intelligence</div>
+            </div>
+
+            <h1 class="auth-title">Create Account</h1>
+            <p class="auth-subtitle">Join India's premier legal AI platform</p>
+
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
+
+            <form id="registerForm">
+                <div class="role-selection">
+                    <label>Select Your Role</label>
+                    <div class="role-cards">
+                        <label class="role-card active" for="lawyer">
+                            <input type="radio" id="lawyer" name="role" value="lawyer" checked>
+                            <span class="role-icon">👨‍⚖️</span>
+                            <div class="role-name">Lawyer</div>
+                            <div class="role-description">Legal Practitioner</div>
+                        </label>
+
+                        <label class="role-card" for="student">
+                            <input type="radio" id="student" name="role" value="student">
+                            <span class="role-icon">🎓</span>
+                            <div class="role-name">Student</div>
+                            <div class="role-description">Law Student</div>
+                        </label>
+
+                        <label class="role-card" for="researcher">
+                            <input type="radio" id="researcher" name="role" value="researcher">
+                            <span class="role-icon">🔬</span>
+                            <div class="role-name">Researcher</div>
+                            <div class="role-description">Legal Research</div>
+                        </label>
+
+                        <label class="role-card" for="corporate">
+                            <input type="radio" id="corporate" name="role" value="corporate">
+                            <span class="role-icon">💼</span>
+                            <div class="role-name">Corporate</div>
+                            <div class="role-description">In-house Counsel</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input 
+                            type="text" 
+                            id="firstName" 
+                            name="firstName" 
+                            placeholder="Arjun"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input 
+                            type="text" 
+                            id="lastName" 
+                            name="lastName" 
+                            placeholder="Sharma"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="arjun.sharma@example.com"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input 
+                        type="tel" 
+                        id="phone" 
+                        name="phone" 
+                        placeholder="+91 98765 43210"
+                        pattern="[+]?[0-9]{10,15}"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="barCouncil">Bar Council ID (Optional for Lawyers)</label>
+                    <input 
+                        type="text" 
+                        id="barCouncil" 
+                        name="barCouncil" 
+                        placeholder="MH/1234/2020"
+                    >
+                </div>
+
+                <div class="form-group password-toggle">
+                    <label for="password">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="Minimum 8 characters"
+                        minlength="8"
+                        required
+                    >
+                    <span class="toggle-icon" onclick="togglePassword('password')">👁️</span>
+                </div>
+
+                <div class="form-group password-toggle">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input 
+                        type="password" 
+                        id="confirmPassword" 
+                        name="confirmPassword" 
+                        placeholder="Re-enter password"
+                        minlength="8"
+                        required
+                    >
+                    <span class="toggle-icon" onclick="togglePassword('confirmPassword')">👁️</span>
+                </div>
+
+                <label class="terms-checkbox">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <span>
+                        I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                    </span>
+                </label>
+
+                <button type="submit" class="btn-primary">Create Account</button>
+            </form>
+
+            <div class="auth-link">
+                Already have an account? <a href="login.html">Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/auth.js"></script>
+    <script>
+        // Role card selection
+        document.querySelectorAll('.role-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.role-card').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                this.querySelector('input[type="radio"]').checked = true;
+            });
+        });
+
+        function togglePassword(fieldId) {
+            const passwordInput = document.getElementById(fieldId);
+            const toggleIcon = passwordInput.nextElementSibling;
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.textContent = '👁️‍🗨️';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.textContent = '👁️';
+            }
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                showError('Passwords do not match!');
+                return;
+            }
+            
+            const formData = {
+                role: document.querySelector('input[name="role"]:checked').value,
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                barCouncil: document.getElementById('barCouncil').value,
+                password: password
+            };
+            
+            // Call register function from auth.js
+            register(formData);
+        });
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.classList.add('show');
+            setTimeout(() => errorDiv.classList.remove('show'), 5000);
+        }
+    </script>
+</body>
+</html>

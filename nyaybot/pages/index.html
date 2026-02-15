@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEXAI - Indian Legal Intelligence Assistant</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/chatbot.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-icon">⚖️</span>
+                <span>LEXAI</span>
+            </div>
+
+            <div class="sidebar-section">Workspace</div>
+            <div class="sidebar-item active" data-page="case-analysis">
+                <i>📋</i>
+                <span>Case Analysis</span>
+            </div>
+            <div class="sidebar-item" data-page="legal-research">
+                <i>🔍</i>
+                <span>Legal Research</span>
+            </div>
+            <div class="sidebar-item" data-page="draft-documents">
+                <i>📝</i>
+                <span>Draft Documents</span>
+            </div>
+            <div class="sidebar-item" data-page="ipc-sections">
+                <i>📖</i>
+                <span>IPC Sections</span>
+            </div>
+            <div class="sidebar-item" data-page="history">
+                <i>🕒</i>
+                <span>History</span>
+            </div>
+
+            <div class="sidebar-section">Settings</div>
+            <div class="sidebar-item" data-page="account">
+                <i>👤</i>
+                <span>Account</span>
+            </div>
+            <div class="sidebar-item" data-page="subscription">
+                <i>💳</i>
+                <span>Subscription</span>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="user-profile" id="userProfile">
+                    <div class="user-avatar" id="sidebarAvatar">U</div>
+                    <div class="user-info">
+                        <div class="user-name" id="sidebarName">User</div>
+                        <div class="user-email" id="sidebarEmail">user@example.com</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header-bar">
+                <div class="page-title">
+                    <h2 id="pageTitle">Case Analysis</h2>
+                    <span class="case-badge" id="caseBadge">Indian Penal Code</span>
+                </div>
+                <div class="header-actions">
+                    <button class="upgrade-btn">Upgrade Plan</button>
+                    <div class="user-avatar-header" id="headerAvatar">U</div>
+                </div>
+            </div>
+
+            <div class="chat-container">
+                <!-- Chat Messages Area -->
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Empty State -->
+                    <div class="empty-state" id="emptyState">
+                        <div class="empty-icon">⚖️</div>
+                        <h3 class="empty-title">Welcome to LEXAI</h3>
+                        <p class="empty-subtitle">
+                            Your AI-powered Indian legal assistant. Ask questions about IPC sections, 
+                            case analysis, legal precedents, or get help drafting legal documents.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="input-container">
+                    <div class="suggestions" id="suggestions">
+                        <div class="suggestion-chip" onclick="sendSuggestion(this)">
+                            Explain Section 377 IPC
+                        </div>
+                        <div class="suggestion-chip" onclick="sendSuggestion(this)">
+                            Landmark judgments on Right to Privacy
+                        </div>
+                        <div class="suggestion-chip" onclick="sendSuggestion(this)">
+                            Draft a consumer complaint
+                        </div>
+                        <div class="suggestion-chip" onclick="sendSuggestion(this)">
+                            Explain Article 21 implications
+                        </div>
+                    </div>
+
+                    <div class="input-wrapper">
+                        <div class="input-field">
+                            <textarea 
+                                id="messageInput" 
+                                placeholder="Type your legal query..." 
+                                rows="1"
+                                onkeypress="handleKeyPress(event)"
+                            ></textarea>
+                            <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                                ➤
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/utils.js"></script>
+    <script>
+        // Initialize user info on page load
+        window.addEventListener('load', function() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (!user.email) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const initial = user.firstName ? user.firstName.charAt(0).toUpperCase() : 'U';
+            const fullName = user.firstName && user.lastName 
+                ? `${user.firstName} ${user.lastName}` 
+                : 'User';
+
+            // Update sidebar
+            document.getElementById('sidebarAvatar').textContent = initial;
+            document.getElementById('sidebarName').textContent = fullName;
+            document.getElementById('sidebarEmail').textContent = user.email;
+
+            // Update header
+            document.getElementById('headerAvatar').textContent = initial;
+        });
+
+        // Sidebar navigation
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+            item.addEventListener('click', function() {
+                if (this.dataset.page) {
+                    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const pageName = this.querySelector('span').textContent;
+                    document.getElementById('pageTitle').textContent = pageName;
+                }
+            });
+        });
+
+        // User profile click
+        document.getElementById('userProfile').addEventListener('click', function() {
+            if (confirm('Do you want to logout?')) {
+                localStorage.removeItem('user');
+                window.location.href = 'login.html';
+            }
+        });
+
+        function sendSuggestion(element) {
+            const text = element.textContent.trim();
+            document.getElementById('messageInput').value = text;
+            sendMessage();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Hide empty state
+            const emptyState = document.getElementById('emptyState');
+            if (emptyState) {
+                emptyState.style.display = 'none';
+            }
+
+            // Hide suggestions after first message
+            document.getElementById('suggestions').style.display = 'none';
+            
+            // Add user message
+            addMessage('user', message);
+            
+            // Clear input
+            input.value = '';
+            input.style.height = 'auto';
+            
+            // Disable send button
+            const sendBtn = document.getElementById('sendBtn');
+            sendBtn.disabled = true;
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            // Simulate AI response
+            setTimeout(() => {
+                hideTypingIndicator();
+                sendBtn.disabled = false;
+                
+                // Get AI response based on message
+                const response = getAIResponse(message);
+                addMessage('bot', response.text, response.references);
+            }, 2000);
+        }
+
+        function addMessage(type, text, references = null) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const time = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            const avatar = type === 'bot' ? '⚖️' : 
+                           document.getElementById('sidebarAvatar').textContent;
+            const sender = type === 'bot' ? 'LEXAI Assistant' : 
+                          document.getElementById('sidebarName').textContent;
+            
+            let referencesHTML = '';
+            if (references && references.length > 0) {
+                referencesHTML = `
+                    <div class="legal-references">
+                        <h4>📚 Legal References:</h4>
+                        <ul>
+                            ${references.map(ref => `<li>${ref}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${avatar}</div>
+                <div class="message-content">
+                    <div class="message-header">
+                        <span class="message-sender">${sender}</span>
+                        <span class="message-time">${time}</span>
+                    </div>
+                    <div class="message-text">${text}${referencesHTML}</div>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const messagesContainer = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="message-avatar">⚖️</div>
+                <div class="message-content">
+                    <div class="message-text">
+                        <div class="typing-indicator">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        function getAIResponse(message) {
+            return getIntelligentResponse(message);
+        }
+
+        // Auto-resize textarea
+        const textarea = document.getElementById('messageInput');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+        });
+    </script>
+</body>
+</html>
